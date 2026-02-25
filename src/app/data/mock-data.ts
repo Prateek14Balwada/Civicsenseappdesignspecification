@@ -1,0 +1,332 @@
+import { Issue, Comment, StatusUpdate, Notification, Stats } from "../types";
+
+// Mock image URLs from Unsplash
+const ISSUE_IMAGES = [
+  "https://images.unsplash.com/photo-1765300013135-e047e42de2ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaXR5JTIwc3RyZWV0JTIwcG90aG9sZSUyMGluZnJhc3RydWN0dXJlfGVufDF8fHx8MTc3MTQ5MzM0N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1770447323553-5cd1b6711134?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicm9rZW4lMjBzdHJlZXRsaWdodCUyMHVyYmFuJTIwbmlnaHR8ZW58MXx8fHwxNzcxNDkzMzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1762805545352-4ac5355b0f0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYXJiYWdlJTIwd2FzdGUlMjBwaWxlJTIwc3RyZWV0fGVufDF8fHx8MTc3MTQ5MzM0OHww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1706206140285-fd36d93aaa83?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlciUyMGxlYWslMjBwaXBlJTIwYnJva2VufGVufDF8fHx8MTc3MTQ5MzM0OHww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1620429485215-e5e0e295c6f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaXR5JTIwcGFyayUyMHBsYXlncm91bmQlMjBlcXVpcG1lbnR8ZW58MXx8fHwxNzcxNDkzMzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1678369257644-926d526a06bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYW1hZ2VkJTIwYnVpbGRpbmclMjBmYWNhZGUlMjBncmFmZml0aXxlbnwxfHx8fDE3NzE0OTMzNDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1759803612770-0330d9081176?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFmZmljJTIwc2lnbiUyMGRhbWFnZWQlMjByb2FkfGVufDF8fHx8MTc3MTQ5MzM0OXww&ixlib=rb-4.1.0&q=80&w=1080",
+];
+
+export const mockIssues: Issue[] = [
+  {
+    id: "1",
+    title: "Large pothole on Main Street",
+    description: "There's a dangerous pothole near the intersection of Main St and 5th Ave that has been causing damage to vehicles. It's approximately 2 feet wide and 6 inches deep.",
+    category: "roads",
+    subCategory: "Potholes",
+    severity: "high",
+    status: "in_progress",
+    location: {
+      address: "Main St & 5th Ave, Downtown",
+      lat: 40.7589,
+      lng: -73.9851,
+    },
+    images: [ISSUE_IMAGES[0]],
+    userId: "user-1",
+    userName: "John Doe",
+    upvotes: 47,
+    commentCount: 12,
+    followers: 23,
+    department: "Public Works",
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "2",
+    title: "Broken streetlight on Park Avenue",
+    description: "The streetlight at 123 Park Avenue has been out for over a week, creating a safety hazard for pedestrians at night.",
+    category: "streetlights",
+    severity: "medium",
+    status: "acknowledged",
+    location: {
+      address: "123 Park Avenue",
+      lat: 40.7614,
+      lng: -73.9776,
+    },
+    images: [ISSUE_IMAGES[1]],
+    userId: "user-2",
+    userName: "Sarah Johnson",
+    upvotes: 28,
+    commentCount: 8,
+    followers: 15,
+    department: "Utilities",
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "3",
+    title: "Overflowing garbage bins at City Park",
+    description: "Multiple garbage bins at the north entrance of City Park are overflowing. This is attracting rodents and creating an unsanitary environment.",
+    category: "garbage",
+    subCategory: "Collection",
+    severity: "high",
+    status: "reported",
+    location: {
+      address: "City Park North Entrance, Green District",
+      lat: 40.7829,
+      lng: -73.9654,
+    },
+    images: [ISSUE_IMAGES[2]],
+    userId: "user-3",
+    userName: "Mike Chen",
+    upvotes: 92,
+    commentCount: 24,
+    followers: 45,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "4",
+    title: "Water main leak on Oak Street",
+    description: "Significant water leak detected on Oak Street between 2nd and 3rd blocks. Water is pooling on the road surface.",
+    category: "water",
+    subCategory: "Main Break",
+    severity: "critical",
+    status: "in_progress",
+    location: {
+      address: "Oak Street, Block 2-3",
+      lat: 40.7489,
+      lng: -73.9680,
+    },
+    images: [ISSUE_IMAGES[3]],
+    userId: "user-4",
+    userName: "Emily Rodriguez",
+    upvotes: 156,
+    commentCount: 38,
+    followers: 78,
+    department: "Water Authority",
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "5",
+    title: "Damaged playground equipment",
+    description: "The swing set at Riverside Park has broken chains and is unsafe for children. Needs immediate attention.",
+    category: "parks",
+    subCategory: "Equipment",
+    severity: "high",
+    status: "acknowledged",
+    location: {
+      address: "Riverside Park, West Side",
+      lat: 40.7956,
+      lng: -73.9712,
+    },
+    images: [ISSUE_IMAGES[4]],
+    userId: "user-5",
+    userName: "David Kim",
+    upvotes: 64,
+    commentCount: 15,
+    followers: 32,
+    department: "Parks & Recreation",
+    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "6",
+    title: "Graffiti on community center wall",
+    description: "Large graffiti vandalism on the south wall of the community center. Offensive content needs removal.",
+    category: "buildings",
+    subCategory: "Vandalism",
+    severity: "medium",
+    status: "resolved",
+    location: {
+      address: "Community Center, 456 Elm Street",
+      lat: 40.7712,
+      lng: -73.9598,
+    },
+    images: [ISSUE_IMAGES[5]],
+    userId: "user-6",
+    userName: "Lisa Thompson",
+    upvotes: 35,
+    commentCount: 9,
+    followers: 18,
+    department: "Building Maintenance",
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    resolvedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "7",
+    title: "Faded stop sign at school crossing",
+    description: "The stop sign at the elementary school crossing is severely faded and barely visible, posing a safety risk to children.",
+    category: "traffic",
+    subCategory: "Signage",
+    severity: "high",
+    status: "reported",
+    location: {
+      address: "Lincoln Elementary School, 789 Maple Ave",
+      lat: 40.7556,
+      lng: -73.9889,
+    },
+    images: [ISSUE_IMAGES[6]],
+    userId: "user-7",
+    userName: "Robert Martinez",
+    upvotes: 118,
+    commentCount: 31,
+    followers: 56,
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "8",
+    title: "Illegal dumping on vacant lot",
+    description: "Construction debris and household waste have been illegally dumped on the vacant lot at 321 Cedar Road.",
+    category: "garbage",
+    subCategory: "Illegal Dumping",
+    severity: "medium",
+    status: "acknowledged",
+    location: {
+      address: "321 Cedar Road, Industrial Area",
+      lat: 40.7423,
+      lng: -73.9534,
+    },
+    images: [ISSUE_IMAGES[2]],
+    userId: "user-8",
+    userName: "Jennifer Lee",
+    upvotes: 41,
+    commentCount: 11,
+    followers: 22,
+    department: "Sanitation",
+    createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+  },
+];
+
+export const mockComments: Comment[] = [
+  {
+    id: "c1",
+    issueId: "1",
+    userId: "admin-1",
+    userName: "Public Works Admin",
+    content: "Thank you for reporting this. Our crew has been dispatched and will begin repairs tomorrow morning.",
+    isAdminReply: true,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "c2",
+    issueId: "1",
+    userId: "user-9",
+    userName: "Tom Wilson",
+    content: "This is causing so much damage to cars. Please fix it ASAP!",
+    isAdminReply: false,
+    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "c3",
+    issueId: "4",
+    userId: "admin-2",
+    userName: "Water Authority",
+    content: "Emergency crew is on site working to stop the leak. Traffic will be diverted for the next 6 hours.",
+    isAdminReply: true,
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  },
+];
+
+export const mockStatusUpdates: Record<string, StatusUpdate[]> = {
+  "1": [
+    {
+      id: "s1-1",
+      issueId: "1",
+      status: "reported",
+      note: "Issue reported by citizen",
+      updatedBy: "user-1",
+      updatedByName: "John Doe",
+      isAdmin: false,
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "s1-2",
+      issueId: "1",
+      status: "acknowledged",
+      note: "Issue acknowledged by Public Works department",
+      updatedBy: "admin-1",
+      updatedByName: "Public Works Admin",
+      isAdmin: true,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "s1-3",
+      issueId: "1",
+      status: "in_progress",
+      note: "Repair crew assigned, work scheduled for tomorrow",
+      updatedBy: "admin-1",
+      updatedByName: "Public Works Admin",
+      isAdmin: true,
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+  ],
+  "4": [
+    {
+      id: "s4-1",
+      issueId: "4",
+      status: "reported",
+      note: "Critical water leak reported",
+      updatedBy: "user-4",
+      updatedByName: "Emily Rodriguez",
+      isAdmin: false,
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "s4-2",
+      issueId: "4",
+      status: "in_progress",
+      note: "Emergency response team dispatched immediately",
+      updatedBy: "admin-2",
+      updatedByName: "Water Authority",
+      isAdmin: true,
+      createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    },
+  ],
+};
+
+export const mockNotifications: Notification[] = [
+  {
+    id: "n1",
+    userId: "user-1",
+    type: "status_change",
+    issueId: "1",
+    issueTitle: "Large pothole on Main Street",
+    message: "Your issue status changed to In Progress",
+    read: false,
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "n2",
+    userId: "user-1",
+    type: "admin_reply",
+    issueId: "1",
+    issueTitle: "Large pothole on Main Street",
+    message: "Public Works Admin replied to your issue",
+    read: false,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+];
+
+export const mockStats: Stats = {
+  totalIssues: 1247,
+  resolvedIssues: 892,
+  openIssues: 355,
+  avgResolutionTime: 4.2,
+  slaBreaches: 23,
+};
+
+// Helper functions
+export function getIssueById(id: string): Issue | undefined {
+  return mockIssues.find((issue) => issue.id === id);
+}
+
+export function getCommentsByIssueId(issueId: string): Comment[] {
+  return mockComments.filter((comment) => comment.issueId === issueId);
+}
+
+export function getStatusUpdatesByIssueId(issueId: string): StatusUpdate[] {
+  return mockStatusUpdates[issueId] || [];
+}
+
+export function getNotificationsByUserId(userId: string): Notification[] {
+  return mockNotifications.filter((notification) => notification.userId === userId);
+}
